@@ -1,0 +1,51 @@
+public with sharing class CircularProgressBar {    
+    
+    public class Fieldsetwrapper {
+        @AuraEnabled public Integer fldSetTotalFields;
+        @AuraEnabled public Integer fieldsetNotNullField;
+        public Fieldsetwrapper(Integer fldSetTotalFields, Integer fieldsetNotNullField){
+            this.fldSetTotalFields = fldSetTotalFields;
+            this.fieldsetNotNullField = fieldsetNotNullField;
+        }
+    }
+    
+    @AuraEnabled
+    public Static Fieldsetwrapper getFieldSetDetail(String sObjectName,String RecordId,String FieldSetName){ 
+        String query='SELECT Id';  
+        Schema.DescribeSObjectResult objDetails = Schema.getGlobalDescribe().get(sObjectName).getDescribe(); 
+        system.debug('>>>objDetails>>>>>'+objDetails);
+        Map<String, Schema.FieldSet> fieldSetMap= objDetails.fieldSets.getMap(); 
+		system.debug('>>>fieldSetMap>>>>>'+fieldSetMap);
+        Schema.FieldSet fldSet = fieldSetMap.get(fieldSetName); 
+        system.debug('>>>fldSet>>>>>'+fldSet);
+        List<String> fieldApiName = new List<String>();
+        for( Schema.FieldSetMember fsm : fldSet.getFields() ) 
+        {
+            system.debug('>>>fsm>>>>>'+fsm);
+            system.debug('>>>fsm.getFieldPath()>>>>>'+fsm.getFieldPath());
+            query = query+','+fsm.getFieldPath(); 
+            fieldApiName.add(fsm.getFieldPath());
+        }
+        system.debug('>>>fieldApiName>>>>>'+fieldApiName);
+        query += ' From ' +sObjectName+ ' WHERE Id =\'' +RecordId +'\'' ;
+        Integer fldSetTotalFields = fieldApiName.size();
+       system.debug('>>>query>>>>>'+query);
+        system.debug('>>>fldSetTotalFields>>>>>'+fldSetTotalFields);
+        List<Sobject> lstsobj = Database.query(query);
+      
+        System.debug('>>>>>lstsobj>>>>>'+lstsobj);
+        List<String> lstNotNullApiName = new List<String>();
+        for(String strApiName :fieldApiName)
+        {
+            System.debug('>>>>>lstsobj[0].get(strApiName)>>>>>'+lstsobj[0].get(strApiName));
+            if(lstsobj[0].get(strApiName) != null)
+            { 
+                lstNotNullApiName.add(strApiName);
+            }
+        }
+        Integer fieldsetNotNullField = lstNotNullApiName.size();
+        System.debug('>>>>>>>>'+lstNotNullApiName);
+        System.debug('>>>>Not Null fields>>>>'+fieldsetNotNullField);
+        return new Fieldsetwrapper(fldSetTotalFields,fieldsetNotNullField); 
+    }   
+}
