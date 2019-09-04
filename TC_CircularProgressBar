@@ -1,3 +1,5 @@
+//Test class file
+
 @isTest
 public class TC_CircularProgressBar {
     
@@ -9,16 +11,21 @@ public class TC_CircularProgressBar {
         acc.Phone = '69852325';
         acc.Website = 'www.stryker.com';
         acc.Industry = 'Healthcare';
-        INSERT acc;               
+        INSERT acc;
+        
+        Account acc1 = new Account();
+        acc1.Name = 'Morgan Stanley';
+        INSERT acc1;        
     }
     
     static testMethod void testgetFieldSetDetail(){
         
         String fldSetApiName = 'FS_Account';
         String objectApiName = 'Account';             
-        Account[] accnt = [SELECT Id FROM Account WHERE Name =: 'Stryker'];
+        Account[] accnt = new Account[] {[SELECT Id FROM Account WHERE Name =: 'Stryker'],
+            			   [SELECT Id FROM Account WHERE Name =: 'Morgan Stanley']};
         
         CircularProgressBar.getFieldSetDetail(objectApiName,accnt[0].Id,fldSetApiName);
-      
+        CircularProgressBar.getFieldSetDetail(objectApiName,accnt[1].Id,fldSetApiName);
     }
 }
