@@ -1,0 +1,6 @@
+<design:component>
+    <design:attribute name="FSApiName" label="Fieldset Name" default ="FS_Account"/>
+    <design:attribute name="sObjectName" label="Object Name" default ="Account"/>
+    <design:attribute name="theme" label="Theme" datasource="blue, green , orange"/>    
+    <design:attribute name="size" label="Size" datasource="small, medium, big"/>    
+</design:component>
